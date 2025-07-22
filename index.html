@@ -87,8 +87,8 @@
       e.preventDefault();
       const url = document.getElementById('tcgUrl').value;
       try {
-        const proxy = 'https://cors-anywhere.herokuapp.com/'; // NOTE: for demo/testing purposes only
-        const res = await fetch(proxy + url);
+        const proxy = 'https://api.allorigins.win/raw?url=';
+        const res = await fetch(proxy + encodeURIComponent(url));
         const text = await res.text();
 
         const nameMatch = text.match(/<h1[^>]*data-testid="lblProductDetailsProductName"[^>]*>(.*?)<\/h1>/);
