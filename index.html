@@ -21,7 +21,7 @@
   </style>
 </head>
 <body>
-  <h1>Pokémon Card Wishlist</h1>
+  <h1>@cambanmon's chase cards</h1>
   <div class="controls">
     <label for="setFilter">Filter by set:</label>
     <select id="setFilter">
@@ -30,11 +30,9 @@
   </div>
   <div id="grid" class="grid"></div>
 
-  <h2 style="text-align:center">Add a New Card (Admin Tool)</h2>
+  <h2 style="text-align:center">Add a New Card by TCGPlayer URL</h2>
   <form id="addCardForm">
-    <input type="text" id="cardName" placeholder="Card Name" required>
-    <input type="url" id="cardImage" placeholder="Image URL" required>
-    <input type="text" id="cardSet" placeholder="Set Name" required>
+    <input type="url" id="tcgUrl" placeholder="Paste TCGPlayer URL here" required>
     <button type="submit">Add Card</button>
   </form>
 
@@ -59,6 +57,7 @@
     function updateSetFilter(cards) {
       const sets = [...new Set(cards.map(c => c.set))].sort();
       const setFilter = document.getElementById('setFilter');
+      setFilter.innerHTML = '<option value="all">All Sets</option>';
       sets.forEach(set => {
         const option = document.createElement('option');
         option.value = set;
@@ -84,15 +83,34 @@
       }
     });
 
-    document.getElementById('addCardForm').addEventListener('submit', (e) => {
+    document.getElementById('addCardForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('cardName').value;
-      const image = document.getElementById('cardImage').value;
-      const set = document.getElementById('cardSet').value;
-      const newCard = { name, image, set };
-      allCards.push(newCard);
-      renderCards(allCards);
-      document.getElementById('addCardForm').reset();
+      const url = document.getElementById('tcgUrl').value;
+      try {
+        const proxy = 'https://cors-anywhere.herokuapp.com/'; // NOTE: for demo/testing purposes only
+        const res = await fetch(proxy + url);
+        const text = await res.text();
+
+        const nameMatch = text.match(/<h1[^>]*data-testid="lblProductDetailsProductName"[^>]*>(.*?)<\/h1>/);
+        const imgMatch = text.match(/https:\/\/tcgplayer-cdn\.tcgplayer\.com\/product\/\d+_in_400x400\.jpg/);
+        const setMatch = text.match(/data-testid="lblProductDetailsSetName">(.*?)<\/span>/);
+
+        if (!nameMatch || !imgMatch || !setMatch) throw new Error("Unable to parse metadata.");
+
+        const newCard = {
+          name: nameMatch[1],
+          image: imgMatch[0],
+          set: setMatch[1]
+        };
+
+        allCards.push(newCard);
+        renderCards(allCards);
+        updateSetFilter(allCards);
+        document.getElementById('addCardForm').reset();
+      } catch (err) {
+        alert("Error fetching or parsing TCGPlayer data. Please make sure the URL is valid.");
+        console.error(err);
+      }
     });
   </script>
 </body>
