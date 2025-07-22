@@ -1,24 +1,102 @@
-import requests
-from bs4 import BeautifulSoup
-import json
-
-urls = [
-  # Previous 14 card URLs...
-  "https://www.tcgplayer.com/product/90098/pokemon-neo-genesis-typhlosion-17?page=1&Language=English",
-  "https://www.tcgplayer.com/product/84584/pokemon-team-rocket-dark-dragonite-5?page=1&Language=English",
-  # … add all 20 new URLs here in the same fashion
+[
+  {
+    "name": "Shining Charizard - Neo Destiny (N4)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/89163_in_400x400.jpg",
+    "set": "Neo Destiny"
+  },
+  {
+    "name": "Dark Gengar - Neo Destiny (N4)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/84599_in_400x400.jpg",
+    "set": "Neo Destiny"
+  },
+  {
+    "name": "Charizard - Expedition (6)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/84183_in_400x400.jpg",
+    "set": "Expedition"
+  },
+  {
+    "name": "Blaine's Charizard - Gym Challenge",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/83861_in_400x400.jpg",
+    "set": "Gym Challenge"
+  },
+  {
+    "name": "Umbreon - Aquapolis (H29)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/90139_in_400x400.jpg",
+    "set": "Aquapolis"
+  },
+  {
+    "name": "Houndoom - Skyridge (H11)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/86200_in_400x400.jpg",
+    "set": "Skyridge"
+  },
+  {
+    "name": "Gengar VMAX - Fusion Strike (Alt Art)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/253266_in_400x400.jpg",
+    "set": "Fusion Strike"
+  },
+  {
+    "name": "Sabrina's Gengar - Gym Heroes",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/88874_in_400x400.jpg",
+    "set": "Gym Heroes"
+  },
+  {
+    "name": "Houndoom - Aquapolis (H11)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/86199_in_400x400.jpg",
+    "set": "Aquapolis"
+  },
+  {
+    "name": "Magikarp & Wailord GX - Team Up (Alt Art)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/183964_in_400x400.jpg",
+    "set": "Team Up"
+  },
+  {
+    "name": "Shining Magikarp - Neo Revelation",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/89166_in_400x400.jpg",
+    "set": "Neo Revelation"
+  },
+  {
+    "name": "Pikachu w/ Grey Felt Hat - Promo",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/518861_in_400x400.jpg",
+    "set": "SV Promo"
+  },
+  {
+    "name": "Blastoise - Expedition (4)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/83888_in_400x400.jpg",
+    "set": "Expedition"
+  },
+  {
+    "name": "Team Rocket's Mewtwo ex - Destined Rivals",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/633031_in_400x400.jpg",
+    "set": "Destined Rivals"
+  },
+  {
+    "name": "Typhlosion 17 - Neo Genesis",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/90098_in_400x400.jpg",
+    "set": "Neo Genesis"
+  },
+  {
+    "name": "Dark Dragonite - Team Rocket",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/84584_in_400x400.jpg",
+    "set": "Team Rocket"
+  },
+  {
+    "name": "Entei - Neo Revelation (6)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/85266_in_400x400.jpg",
+    "set": "Neo Revelation"
+  },
+  {
+    "name": "Dragonite - Expedition (9)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/84910_in_400x400.jpg",
+    "set": "Expedition"
+  },
+  {
+    "name": "Gengar - Expedition (13)",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/85671_in_400x400.jpg",
+    "set": "Expedition"
+  },
+  {
+    "name": "Glaceon LV.X - Majestic Dawn",
+    "image": "https://tcgplayer-cdn.tcgplayer.com/product/85750_in_400x400.jpg",
+    "set": "Majestic Dawn"
+  }
 ]
-
-def fetch_card_meta(url):
-    r = requests.get(url)
-    r.raise_for_status()
-    soup = BeautifulSoup(r.text, 'html.parser')
-    name = soup.find('h1', {'data-testid':'lblProductDetailsProductName'}).text.strip()
-    img = soup.find('img', {'data-testid': lambda v:v and v.startswith('product-image__container--')})['src']
-    setname = soup.find('a', {'data-testid':'lnkProductDetailsSetName'}).text.strip()
-    return {'name': name, 'image': img.replace('_200x200', '_400x400'), 'set': setname}
-
-cards = [fetch_card_meta(u) for u in urls]
-
-with open('cards.json', 'w') as f:
-    json.dump(cards, f, indent=2)
