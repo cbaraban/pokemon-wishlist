@@ -1,0 +1,24 @@
+import requests
+from bs4 import BeautifulSoup
+import json
+
+urls = [
+  # Previous 14 card URLs...
+  "https://www.tcgplayer.com/product/90098/pokemon-neo-genesis-typhlosion-17?page=1&Language=English",
+  "https://www.tcgplayer.com/product/84584/pokemon-team-rocket-dark-dragonite-5?page=1&Language=English",
+  # … add all 20 new URLs here in the same fashion
+]
+
+def fetch_card_meta(url):
+    r = requests.get(url)
+    r.raise_for_status()
+    soup = BeautifulSoup(r.text, 'html.parser')
+    name = soup.find('h1', {'data-testid':'lblProductDetailsProductName'}).text.strip()
+    img = soup.find('img', {'data-testid': lambda v:v and v.startswith('product-image__container--')})['src']
+    setname = soup.find('a', {'data-testid':'lnkProductDetailsSetName'}).text.strip()
+    return {'name': name, 'image': img.replace('_200x200', '_400x400'), 'set': setname}
+
+cards = [fetch_card_meta(u) for u in urls]
+
+with open('cards.json', 'w') as f:
+    json.dump(cards, f, indent=2)
